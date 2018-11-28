@@ -41,20 +41,22 @@ def captureVideo():
 
             # if the resized image is smaller than the template, then break
             # from the loop
-            edged = cv2.Canny(resized, 50, 200)
-            result = cv2.matchTemplate(edged, pattern_image, cv2.TM_CCOEFF)
+            #edged = cv2.Canny(resized, 50, 200)
+            result = cv2.matchTemplate(img_gray, pattern_image, cv2.TM_CCOEFF_NORMED)
+
             (_, maxVal, _, maxLoc) = cv2.minMaxLoc(result)
             # if we have found a new maximum correlation value, then update
             # the found variable if found is None or maxVal > found[0]:
-            if result.shape[0] < h or result.shape[1] < w:
+            if resized.shape[0] < h or resized.shape[1] < w:
                 break
+
             found = (maxVal, maxLoc, r)
 
             # unpack the found varaible and compute the (x, y) coordinates
         # of the bounding box based on the resized ratio
         (_, maxLoc, r) = found
-        (startX, startY) = (int(maxLoc[0]), int(maxLoc[1]))
-        (endX, endY) = (maxLoc[0] + int(w * r), maxLoc[1] + int(h * r))
+        (startX, startY) = (int(maxLoc[0]), int(maxLoc[1] ))
+        (endX, endY) = (maxLoc[0] + w, maxLoc[1] + h)
 
         # draw a bounding box around the detected result and display the image
         cv2.rectangle(image_array, (startX, startY), (endX, endY), (0, 0, 255), 2)
