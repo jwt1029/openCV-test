@@ -42,7 +42,7 @@ def captureVideo():
             # if the resized image is smaller than the template, then break
             # from the loop
             #edged = cv2.Canny(resized, 50, 200)
-            result = cv2.matchTemplate(img_gray, pattern_image, cv2.TM_CCOEFF_NORMED)
+            result = cv2.matchTemplate(resized, pattern_image, cv2.TM_CCOEFF_NORMED)
 
             (_, maxVal, _, maxLoc) = cv2.minMaxLoc(result)
             # if we have found a new maximum correlation value, then update
@@ -50,17 +50,18 @@ def captureVideo():
             if resized.shape[0] < h or resized.shape[1] < w:
                 break
 
-            found = (maxVal, maxLoc, r)
+            if maxVal > 0.8:
+                found = (maxVal, maxLoc, r)
 
-            # unpack the found varaible and compute the (x, y) coordinates
+        # unpack the found varaible and compute the (x, y) coordinates
         # of the bounding box based on the resized ratio
-        (_, maxLoc, r) = found
-        (startX, startY) = (int(maxLoc[0]), int(maxLoc[1] ))
-        (endX, endY) = (maxLoc[0] + w, maxLoc[1] + h)
+        if found is not None:
+            (_, maxLoc, r) = found
+            (startX, startY) = (int(maxLoc[0] * r), int(maxLoc[1] * r))
+            (endX, endY) = (int((maxLoc[0] + w) * r), int((maxLoc[1] + h) * r))
 
-        # draw a bounding box around the detected result and display the image
-        cv2.rectangle(image_array, (startX, startY), (endX, endY), (0, 0, 255), 2)
-
+            # draw a bounding box around the detected result and display the image
+            cv2.rectangle(image_array, (startX, startY), (endX, endY), (0, 0, 255), 2)
 
         global sim_able
         sim_able = False
