@@ -16,7 +16,17 @@ def captureVideo():
     FILENAME = 'image/smallDaeng.jpg'
     pattern_image = cv2.imread(FILENAME, 0)
     w, h = pattern_image.shape[::-1]
+    maxRate = 0
+
+    # Text format
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    bottomLeftCornerOfText = (5, 15)
+    fontScale = 0.5
+    fontColor = (255, 255, 255)
+    lineType = 1
+
     while 1:
+        maxRate = 0
         sct.get_pixels(mon)
         img = Image.frombytes('RGB', (sct.width, sct.height), sct.image)
 
@@ -56,13 +66,21 @@ def captureVideo():
         # unpack the found varaible and compute the (x, y) coordinates
         # of the bounding box based on the resized ratio
         if found is not None:
-            (_, maxLoc, r) = found
+            (maxVal, maxLoc, r) = found
+            maxRate = maxVal
             (startX, startY) = (int(maxLoc[0] * r), int(maxLoc[1] * r))
             (endX, endY) = (int((maxLoc[0] + w) * r), int((maxLoc[1] + h) * r))
+
 
             # draw a bounding box around the detected result and display the image
             cv2.rectangle(image_array, (startX, startY), (endX, endY), (0, 0, 255), 2)
 
+        cv2.putText(image_array, str(maxRate),
+                    bottomLeftCornerOfText,
+                    font,
+                    fontScale,
+                    fontColor,
+                    lineType)
         global sim_able
         sim_able = False
         if value in image_array[:, image_array.shape[0] - 1]:
@@ -73,15 +91,15 @@ def captureVideo():
         if cv2.waitKey(25) & 0xFF == ord('q'):
             cv2.destroyAllWindows()
             break
-
+'''
 def sim():
     global sim_able
     while 1:
         sleep(3)
         if sim_able:
             print("sim")
-
+'''
 if __name__ == '__main__':
-    t = threading.Thread(target=sim, args=())
-    t.start()
+    #t = threading.Thread(target=sim, args=())
+    #t.start()
     captureVideo()
