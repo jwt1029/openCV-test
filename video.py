@@ -14,6 +14,7 @@ def captureVideo():
     sct = mss()
     value = np.array([237, 28, 36])
     FILENAME = 'image/smallDaeng.jpg'
+    #FILENAME = 'image/daengdaeng2.jpg'
     pattern_image = cv2.imread(FILENAME, 0)
     w, h = pattern_image.shape[::-1]
     maxRate = 0
